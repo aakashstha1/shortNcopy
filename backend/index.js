@@ -1,10 +1,14 @@
 import http from "http";
 import dotenv from "dotenv";
 import app from "./src/configs/express-config.js";
+import { dbConnection } from "./src/configs/db-config.js";
 
-dotenv.config({ quiet: true });
+dotenv.config({quiet: true});
 
 const appServer = http.createServer(app);
+
+// FIX: Connect to DB before starting the server
+await dbConnection();
 
 appServer.listen(process.env.PORT, (error) => {
   if (error) {
