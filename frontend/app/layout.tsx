@@ -28,13 +28,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "shortNcopy",
-  description: "Short URL generator",
+  title: "ShortNopy - Free URL Shortener",
+  description: "Shorten long URLs instantly for free.",
   keywords: [
     "short",
     "url",
     "generate",
-    "free",
+    "free short url",
     "shorten",
     "copy",
     "shorten url",

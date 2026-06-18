@@ -32,7 +32,7 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK" });
 });
 
-app.use("/api/v1", router);
+app.use(router);
 
 app.use((req, res, next) => {
   next({
