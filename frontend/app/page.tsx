@@ -1,65 +1,152 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { Check, Copy, CheckCircle2 } from "lucide-react";
+import { HashLoader } from "react-spinners";
+import { toast } from "sonner";
+import type { AxiosError } from "axios";
+
+import { useShortenUrl } from "./features/url/useShortenUrl";
+
+import Heading from "@/components/common/Heading";
+import { Input } from "@/components/ui/input";
+import Steps from "@/components/common/Steps";
+import { Button } from "@/components/ui/button";
+import { urlSchema } from "@/utils/urlSchema";
+
+const inputClasses =
+  "border border-border bg-background overflow-hidden shadow-none focus-visible:ring-0 transition-all focus-within:ring-2 focus-within:ring-emerald-500/30 focus-within:border-emerald-500";
+
+const buttonClasses =
+  "font-semibold gap-2 bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer";
 
 export default function Home() {
+  const [url, setUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const { mutate, isPending } = useShortenUrl();
+
+  const handleShortenUrl = () => {
+    const result = urlSchema.safeParse({
+      originalUrl: url,
+    });
+
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
+      return;
+    }
+
+    toast.dismiss();
+
+    mutate(
+      { originalUrl: result.data.originalUrl },
+      {
+        onSuccess: (data) => {
+          setShortUrl(data.data.shortUrl);
+          toast.success(data?.message || "Short URL generated!");
+        },
+        onError: (err: unknown) => {
+          const error = err as AxiosError<{ message: string }>;
+          toast.error(
+            error?.response?.data?.message || "Failed to shorten URL",
+          );
+        },
+      },
+    );
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+      setCopied(true);
+      toast.success("Copied to clipboard!");
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
+
+  const commonInputProps = {
+    type: "url" as const,
+    value: url,
+    placeholder: "Enter your url here...",
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+      setUrl(e.target.value),
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") handleShortenUrl();
+    },
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen bg-background lg:flex lg:items-center lg:justify-center">
+      <div className="w-full max-w-4xl lg:border-4 lg:border-dashed lg:border-gray-200 lg:rounded-4xl p-8 lg:p-10">
+        <Heading />
+
+        {/* Desktop */}
+        <div className={`hidden md:flex rounded-xl ${inputClasses} mb-8`}>
+          <Input
+            {...commonInputProps}
+            className="flex-1 border-0 rounded-none h-12 px-4 text-sm"
+          />
+          <div className="flex shrink-0 items-stretch">
+            <div className="w-px bg-border" />
+            <Button
+              onClick={handleShortenUrl}
+              disabled={isPending}
+              className={`rounded-none rounded-r-xl h-12 px-5 text-sm w-32 ${buttonClasses}`}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              {isPending ? <HashLoader size={20} color="#fff" /> : "Generate"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile */}
+        <div className="md:hidden flex flex-col space-y-2 mb-6">
+          <Input
+            {...commonInputProps}
+            className={`px-4 rounded-xl text-sm ${inputClasses}`}
+          />
+          <Button
+            onClick={handleShortenUrl}
+            disabled={isPending}
+            className={`w-full rounded-xl h-10 px-5 text-sm ${buttonClasses}`}
+          >
+            {isPending ? <HashLoader size={20} color="#fff" /> : "Generate"}
+          </Button>
+        </div>
+
+        {/* Result */}
+        {shortUrl && (
+          <div className="flex items-center gap-3 bg-muted border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 mb-8">
+            <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+            <span className="flex-1 font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              {shortUrl}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopy}
+              className="text-xs font-semibold gap-1.5 h-8 rounded-lg"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+              {copied ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  Copy
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+
+        <div className="h-px bg-border mb-6" />
+        <Steps />
+      </div>
     </div>
   );
 }
