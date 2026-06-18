@@ -68,7 +68,7 @@ export default function Home() {
   };
 
   const commonInputProps = {
-    type: "url" as const,
+    type: "search" as const,
     value: url,
     placeholder: "Enter your url here...",
     onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -120,30 +120,42 @@ export default function Home() {
         {shortUrl && (
           <div className="flex items-center gap-3 bg-muted border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 mb-8">
             <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-            <span className="flex-1 font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400">
+
+            {/* Short URL */}
+            <span
+              onClick={() => {
+                if (window.innerWidth < 768) {
+                  handleCopy();
+                }
+              }}
+              className="flex-1 min-w-0 font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400 cursor-pointer md:cursor-default overflow-x-auto whitespace-nowrap no-scrollbar"
+            >
               {shortUrl}
             </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopy}
-              className="text-xs font-semibold gap-1.5 h-8 rounded-lg"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5" />
-                  Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  Copy
-                </>
-              )}
-            </Button>
+
+            {/* Desktop only copy button */}
+            <div className="hidden md:block">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="text-xs font-semibold gap-1.5 h-8 rounded-lg"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    Copy
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         )}
-
         <div className="h-px bg-border mb-6" />
         <Steps />
       </div>
