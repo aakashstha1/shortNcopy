@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/health", (req, res) => {
-  res.send("OK");
+  res.status(200).json({ status: "OK" });
 });
 
 app.use("/api/v1", router);
@@ -43,7 +43,9 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  console.log("Garbage error: ", error);
+  if (error.statusCode >= 500) {
+    console.error(error);
+  }
 
   let statusCode = error.statusCode || httpResponseCode.INTERNAL_SERVER_ERROR;
   let status = error.status || httpResponseMessage.internalServerError;
