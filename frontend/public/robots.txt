@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://shortncopy.netlify.app
+
+# Sitemaps
+Sitemap: https://shortncopy.netlify.app/sitemap.xml
