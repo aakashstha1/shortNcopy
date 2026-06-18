@@ -28,6 +28,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/health", (req, res) => {
+  res.send("OK");
+});
+
 app.use("/api/v1", router);
 
 app.use((req, res, next) => {
