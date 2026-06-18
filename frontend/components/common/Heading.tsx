@@ -18,12 +18,10 @@ function Heading() {
 
       {/* Heading */}
       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-none mb-4">
-        Short<span className="text-emerald-500">N</span>Pay
+        Short<span className="text-emerald-500">N</span>Copy
       </h1>
       <p className="text-muted-foreground text-xs md:text-base mb-8 leading-relaxed">
-        Paste any long URL below get a short link instantly.
-        {/* <br />
-        on click. */}
+        Paste any long URL below get a short and clean link.
       </p>
     </>
   );
