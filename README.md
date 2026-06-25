@@ -66,25 +66,25 @@ shortNpay/
 │   
 └── backend/
      └──src/
-      │──configs
-      │      db-config.js
-      │      express-config.js
-      │      router-config.js
-      │       
-      ├───constants
-      │       http-response-code.js
-      │       http-response-message.js
-      │       
-      ├───middlewares
-      │       request-validator-middleware.js
-      │       
-      └───modules
-          └───url
-                url-controller.js
-                url-model.js
-                url-request.js
-                url-router.js
-                url-service.js
+         │──configs
+         │      db-config.js
+         │      express-config.js
+         │      router-config.js
+         │       
+         ├───constants
+         │       http-response-code.js
+         │       http-response-message.js
+         │       
+         ├───middlewares
+         │       request-validator-middleware.js
+         │       
+         └───modules
+             └───url
+                   url-controller.js
+                   url-model.js
+                   url-request.js
+                   url-router.js
+                   url-service.js
 ```
 
 ## 🚀 Getting Started
